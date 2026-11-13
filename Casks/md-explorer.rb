@@ -15,16 +15,17 @@ cask "md-explorer" do
     strategy :github_latest
   end
 
-  depends_on macos: ">= :monterey"
+  depends_on macos: :monterey
 
   app "MD Explorer.app"
   binary "#{appdir}/MD Explorer.app/Contents/Resources/bin/md-explorer"
 
   # The app is ad-hoc signed, not notarized. Clear the download quarantine flag
   # so macOS opens it without the "cannot verify developer" block.
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/MD Explorer.app"]
+  postflight_steps do
+    run "/usr/bin/xattr",
+        args:         ["-dr", "com.apple.quarantine", "/Applications/MD Explorer.app"],
+        must_succeed: false
   end
 
   zap trash: [
